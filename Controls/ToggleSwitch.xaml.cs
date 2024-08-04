@@ -3,9 +3,42 @@ namespace Hl.Maui.Controls;
 public partial class ToggleSwitch : ContentView
 {
     #region Bindable Properties
-    public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(ToggleSwitch.Text), typeof(string), typeof(ToggleSwitch));
-    public static readonly BindableProperty OnTextProperty = BindableProperty.Create(nameof(ToggleSwitch.OnText), typeof(string), typeof(ToggleSwitch), "On");
-    public static readonly BindableProperty OffTextProperty = BindableProperty.Create(nameof(ToggleSwitch.OffText), typeof(string), typeof(ToggleSwitch), "Off");
+    public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(ToggleSwitch.Text), typeof(string), typeof(ToggleSwitch), propertyChanged: (bindable, oldValue, newValue) =>
+    {
+        var control = (ToggleSwitch)bindable;
+        var value = (string)newValue;
+
+        if (control.IsChecked && control.OnText != null)
+            control.Label.Text = control.OnText;
+        else if (!control.IsChecked && control.OffText != null)
+            control.Label.Text = control.OffText;
+        else
+            control.Label.Text = value ?? string.Empty;
+    });
+    public static readonly BindableProperty OnTextProperty = BindableProperty.Create(nameof(ToggleSwitch.OnText), typeof(string), typeof(ToggleSwitch), null, propertyChanged: (bindable, oldValue, newValue) =>
+    {
+        var control = (ToggleSwitch)bindable;
+        var value = (string)newValue;
+
+        if (control.IsChecked)
+            control.Label.Text = value;
+        else if (!control.IsChecked && control.OffText != null)
+            control.Label.Text = control.OffText;
+        else
+            control.Label.Text = control.Text ?? string.Empty;
+    });
+    public static readonly BindableProperty OffTextProperty = BindableProperty.Create(nameof(ToggleSwitch.OffText), typeof(string), typeof(ToggleSwitch), null, propertyChanged: (bindable, oldValue, newValue) =>
+    {
+        var control = (ToggleSwitch)bindable;
+        var value = (string)newValue;
+
+        if (!control.IsChecked)
+            control.Label.Text = value;
+        else if (control.IsChecked && control.OnText != null)
+            control.Label.Text = control.OnText;
+        else
+            control.Label.Text = control.Text ?? string.Empty;
+    });
     public static readonly BindableProperty OnTextColorProperty = BindableProperty.Create(nameof(ToggleSwitch.OnTextColor), typeof(Color), typeof(ToggleSwitch), propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = (ToggleSwitch)bindable;
@@ -66,20 +99,22 @@ public partial class ToggleSwitch : ContentView
     public ToggleSwitch()
 	{
 		this.InitializeComponent();
+        this.IsChecked = !this.IsChecked;
+        this.IsChecked = !this.IsChecked;
 	}
 
     #region Public Properties
-    public string Text
+    public string? Text
     {
         get => (string)base.GetValue(TextProperty);
         private set => base.SetValue(TextProperty, value);
     }
-    public string OnText
+    public string? OnText
     {
         get => (string)base.GetValue(OnTextProperty);
         set => base.SetValue(OnTextProperty, value);
     }
-    public string OffText
+    public string? OffText
     {
         get => (string)base.GetValue(OffTextProperty);
         set => base.SetValue(OffTextProperty, value);
@@ -167,7 +202,7 @@ public partial class ToggleSwitch : ContentView
             bounds.Width,
             bounds.Height)), isChecked ? 0 : 1, isChecked ? 1 : 0));
 
-        parentAnimation.Commit(control, "toggleAnimation", rate, 250, Easing.CubicInOut, (v, c) => control.Text = isChecked ? control.OnText : control.OffText);
+        parentAnimation.Commit(control, "toggleSwitchAnimation", rate, 250, Easing.CubicInOut, (v, c) => control.Text = isChecked ? (control.OnText??control.Text??string.Empty) : (control.OffText ?? control.Text ?? string.Empty));
     }
 
     private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
