@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Hl.Maui.Demos.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Hl.Maui.Demos"
+    Shell.FlyoutBehavior="Disabled"
+    xmlns:views="clr-namespace:Hl.Maui.Demos.Views"
+    xmlns:controlViews="clr-namespace:Hl.Maui.Demos.Views.Controls"
+    Title="HL Maui Tools Demos">
+
+    <Tab Title="Welcome">
+        <ShellContent ContentTemplate="{DataTemplate views:Main}" Route="home" />
+    </Tab>
+    <Tab Title="Switch">
+        <ShellContent ContentTemplate="{DataTemplate controlViews:ToggleSwitch}" Route="toggleswitch" />
+    </Tab>
+
+</Shell>
