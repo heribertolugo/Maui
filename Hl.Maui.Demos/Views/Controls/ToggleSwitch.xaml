@@ -11,13 +11,13 @@
     </ContentPage.BindingContext>
 
     <VerticalStackLayout>
-        <controls:ToggleSwitch Grid.Column="2" Grid.Row="0" IsChecked="True" OffTextColor="Red" OnTextColor="Yellow" BackgroundColor="Gray" 
+        <controls:ToggleSwitch Grid.Column="2" Grid.Row="0" IsChecked="True" OffTextColor="Red" OnTextColor="Yellow" BackgroundColor="Black" 
                                OnTrackColor="Blue" WidthRequest="300" HeightRequest="100"/>
 
         <controls:ToggleSwitch Margin="0,20,0,0" 
                                WidthRequest="100" OnText=" Active " OffText="Inactive" BackgroundColor="YellowGreen" 
                                OnTextColor="{StaticResource SystemBlue}" OffTextColor="{StaticResource SystemRedDark}"
-                               OnThumbColor="{StaticResource SystemGreen}" OffThumbColor="{StaticResource Gray300}"
-                               OnTrackColor="{StaticResource SystemBlue}" OffTrackColor="{StaticResource Gray500}" IsChecked="{Binding IsActive, Mode=TwoWay}"/>
+                               OnThumbColor="{StaticResource SystemGreen}" OffThumbColor="{StaticResource SystemBlueDark}"
+                               OnTrackColor="{StaticResource SystemBlue}" OffTrackColor="{StaticResource PrimaryDark}" IsChecked="{Binding IsActive, Mode=TwoWay}"/>
     </VerticalStackLayout>
 </ContentPage>
