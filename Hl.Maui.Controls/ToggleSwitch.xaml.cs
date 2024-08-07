@@ -10,11 +10,7 @@ public partial class ToggleSwitch : ContentView
         var control = (ToggleSwitch)bindable;
         var value = (string)newValue;
 
-        if (control.IsChecked && control.OnText != null)
-            control.Label.Text = control.OnText;
-        else if (!control.IsChecked && control.OffText != null)
-            control.Label.Text = control.OffText;
-        else
+        if (value != null)
             control.Label.Text = value ?? string.Empty;
     });
     public static readonly BindableProperty OnTextProperty = BindableProperty.Create(nameof(ToggleSwitch.OnText), typeof(string), typeof(ToggleSwitch), null, propertyChanged: (bindable, oldValue, newValue) =>
@@ -22,24 +18,25 @@ public partial class ToggleSwitch : ContentView
         var control = (ToggleSwitch)bindable;
         var value = (string)newValue;
 
-        if (control.IsChecked)
+        if (control.Text != null)
+            control.Label.Text = control.Text;
+        else if (control.IsChecked)
             control.Label.Text = value;
         else if (!control.IsChecked && control.OffText != null)
             control.Label.Text = control.OffText;
-        else
-            control.Label.Text = control.Text ?? string.Empty;
     });
     public static readonly BindableProperty OffTextProperty = BindableProperty.Create(nameof(ToggleSwitch.OffText), typeof(string), typeof(ToggleSwitch), null, propertyChanged: (bindable, oldValue, newValue) =>
     {
         var control = (ToggleSwitch)bindable;
         var value = (string)newValue;
 
-        if (!control.IsChecked)
+
+        if (control.Text != null)
+            control.Label.Text = control.Text;
+        else if (!control.IsChecked)
             control.Label.Text = value;
         else if (control.IsChecked && control.OnText != null)
             control.Label.Text = control.OnText;
-        else
-            control.Label.Text = control.Text ?? string.Empty;
     });
     public static readonly BindableProperty OnTextColorProperty = BindableProperty.Create(nameof(ToggleSwitch.OnTextColor), typeof(Color), typeof(ToggleSwitch), propertyChanged: (bindable, oldValue, newValue) =>
     {
@@ -98,8 +95,6 @@ public partial class ToggleSwitch : ContentView
         var value = (Color)newValue;
         if (control.IsChecked)
             control.Track.Fill = value;
-        //else
-        //    control.Track.Fill = control.OffTrackColor;
     });
     public static readonly BindableProperty OffTrackColorProperty = BindableProperty.Create(nameof(ToggleSwitch.OffTrackColor), typeof(Color), typeof(ToggleSwitch), Colors.Grey, propertyChanged: (bindable, oldValue, newValue) =>
     {
@@ -107,8 +102,6 @@ public partial class ToggleSwitch : ContentView
         var value = (Color)newValue;
         if (!control.IsChecked)
             control.Track.Fill = value;
-        //else
-        //    control.Track.Fill = control.OnTrackColor;
     });
     public static readonly new BindableProperty HeightRequestProperty = BindableProperty.Create(nameof(ToggleSwitch.HeightRequest), typeof(double), typeof(ToggleSwitch), propertyChanged: (bindable, oldValue, newValue) =>
     {
@@ -124,17 +117,18 @@ public partial class ToggleSwitch : ContentView
             bounds.Y,
             value,
             bounds.Height));
+        control.Track.CornerRadius = value / 2;
         // hacky way to fix bug when height set too big, the thumb looses its coordinates
         control.IsChecked = !control.IsChecked;
         control.IsChecked = !control.IsChecked;
+        control.ChangeVisualState();
     });
     #endregion Bindable Properties
 
     public ToggleSwitch()
     {
         this.InitializeComponent();
-        this.IsChecked = !this.IsChecked;
-        this.IsChecked = !this.IsChecked;
+        base.ChangeVisualState();
     }
 
     #region Public Properties
@@ -236,11 +230,19 @@ public partial class ToggleSwitch : ContentView
             bounds.Width,
             bounds.Height)), isChecked ? 0 : 1, isChecked ? 1 : 0));
 
-        parentAnimation.Commit(control, "toggleSwitchAnimation", rate, 250, Easing.CubicInOut, (v, c) => control.Text = isChecked ? (control.OnText ?? control.Text ?? string.Empty) : (control.OffText ?? control.Text ?? string.Empty));
+        parentAnimation.Commit(control, "toggleSwitchAnimation", rate, 250, Easing.CubicInOut, (v, c) => control.Text = isChecked ? (control.Text ?? control.OnText ?? string.Empty) : (control.Text ?? control.OffText ?? string.Empty));
     }
 
     private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
     {
         this.IsChecked = !this.IsChecked;
     }
+}
+
+
+public enum ToggleSwitchStyle
+{
+    Outset,
+    Inset,
+    Box
 }
